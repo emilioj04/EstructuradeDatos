@@ -1,1 +1,3 @@
 # EstructuradeDatos
+Integrantes: 
+-Josue Torres
