@@ -50,6 +50,7 @@ public class master extends javax.swing.JFrame {
         jTextArea1 = new javax.swing.JTextArea();
         jPanel1 = new DrawingPanel();
         reiniciar = new javax.swing.JButton();
+        resetear = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -111,6 +112,13 @@ public class master extends javax.swing.JFrame {
             }
         });
 
+        resetear.setLabel("Resetear");
+        resetear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetearActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -126,16 +134,20 @@ public class master extends javax.swing.JFrame {
                                 .addComponent(inOrden)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(preOrden)
-                                .addGap(128, 128, 128)
-                                .addComponent(postOrden))
-                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE))
+                                .addGap(116, 116, 116)
+                                .addComponent(postOrden)
+                                .addGap(12, 12, 12))
+                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 518, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(agregar)
                                 .addGap(18, 18, 18)
                                 .addComponent(eliminar))
-                            .addComponent(reiniciar, javax.swing.GroupLayout.Alignment.TRAILING))))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(resetear)
+                                .addGap(18, 18, 18)
+                                .addComponent(reiniciar)))))
                 .addGap(15, 15, 15))
         );
         layout.setVerticalGroup(
@@ -151,7 +163,8 @@ public class master extends javax.swing.JFrame {
                     .addComponent(inOrden)
                     .addComponent(preOrden)
                     .addComponent(postOrden)
-                    .addComponent(reiniciar))
+                    .addComponent(reiniciar)
+                    .addComponent(resetear))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -203,6 +216,13 @@ public class master extends javax.swing.JFrame {
         ((DrawingPanel) jPanel1).resetColors();
         jPanel1.repaint();
     }//GEN-LAST:event_reiniciarActionPerformed
+
+    private void resetearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetearActionPerformed
+        arbol = new Arbol();
+        ((DrawingPanel) jPanel1).actualizarArbol(arbol);
+        jTextArea1.setText("");
+        jPanel1.repaint();
+    }//GEN-LAST:event_resetearActionPerformed
 
     /**
      * @param args the command line arguments
@@ -305,5 +325,6 @@ public class master extends javax.swing.JFrame {
     private javax.swing.JButton postOrden;
     private javax.swing.JButton preOrden;
     private javax.swing.JButton reiniciar;
+    private javax.swing.JButton resetear;
     // End of variables declaration//GEN-END:variables
 }
