@@ -1,7 +1,6 @@
 package estructuradatos;
 
 import javax.swing.JTextArea;
-import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ public class Arbol implements Estructura {
     public Arbol() {
         this.raiz = null;
     }
-    
+
     public Nodo getRaiz() {
         return this.raiz;
     }
@@ -71,95 +70,59 @@ public class Arbol implements Estructura {
         return acc;
     }
 
-public void postOrden(JTextArea textArea) {
-    int[] posicion = {1};
-    textArea.setText(postOrdenRec(raiz, "", posicion));
-}
-
-private String postOrdenRec(Nodo raiz, String acc, int[] posicion) {
-    if (raiz != null) {
-        acc = postOrdenRec(raiz.getIzquierda(), acc, posicion);
-        acc = postOrdenRec(raiz.getDerecha(), acc, posicion);
-        acc += "(" + posicion[0]++ + ") " + raiz.getValor() + " ";
+    public void postOrden(JTextArea textArea) {
+        int[] posicion = {1};
+        textArea.setText(postOrdenRec(raiz, "", posicion));
     }
-    return acc;
-}
 
-    
-    private void dibujarArbol(Graphics2D g, int x, int y, Nodo nodo, int espacio) {
-        if (nodo != null) {
-            String nodoInfo = "(" + nodo.getPosicion() + ") " + nodo.getValor(); // Agregar posición aquí
-            g.drawString(nodoInfo, x, y);
-            if (nodo.getIzquierda() != null) {
-                dibujarLinea(g, x - espacio, y + 50, x, y);
-                dibujarArbol(g, x - espacio, y + 50, nodo.getIzquierda(), espacio / 2);
-            }
-            if (nodo.getDerecha() != null) {
-                dibujarLinea(g, x + espacio, y + 50, x, y);
-                dibujarArbol(g, x + espacio, y + 50, nodo.getDerecha(), espacio / 2);
-            }
+    private String postOrdenRec(Nodo raiz, String acc, int[] posicion) {
+        if (raiz != null) {
+            acc = postOrdenRec(raiz.getIzquierda(), acc, posicion);
+            acc = postOrdenRec(raiz.getDerecha(), acc, posicion);
+            acc += "(" + posicion[0]++ + ") " + raiz.getValor() + " ";
         }
+        return acc;
     }
-    
-    private void dibujarNodo(Graphics2D g, Nodo nodo, int x, int y, int espacio, int nivel) {
+
+    public List<Nodo> getInOrdenNodos() {
+        List<Nodo> nodos = new ArrayList<>();
+        getInOrdenNodosRec(raiz, nodos);
+        return nodos;
+    }
+
+    private void getInOrdenNodosRec(Nodo nodo, List<Nodo> nodos) {
         if (nodo != null) {
-            g.drawString(Integer.toString(nodo.getValor()), x, y);
-            if (nodo.getIzquierda() != null) {
-                dibujarLinea(g, x - espacio, y + nivel, x, y);
-                dibujarNodo(g, nodo.getIzquierda(), x - espacio, y + nivel, espacio / 2, nivel - espacio);
-            }
-            if (nodo.getDerecha() != null) {
-                dibujarLinea(g, x + espacio, y + nivel, x, y);
-                dibujarNodo(g, nodo.getDerecha(), x + espacio, y + nivel, espacio / 2, nivel - espacio);
-            }
-        }
-    }
-    
-    private void dibujarLinea(Graphics2D g, int x1, int y1, int x2, int y2) {
-        g.drawLine(x1, y1, x2, y2);
-    }
-
-    // Métodos para obtener las coordenadas del recorrido
-
-    public List<int[]> getInOrdenCoords(int x, int y, int espacio, int nivel) {
-        List<int[]> coords = new ArrayList<>();
-        getInOrdenCoordsRec(raiz, x, y, espacio, nivel, coords);
-        return coords;
-    }
-
-    private void getInOrdenCoordsRec(Nodo nodo, int x, int y, int espacio, int nivel, List<int[]> coords) {
-        if (nodo != null) {
-            getInOrdenCoordsRec(nodo.getIzquierda(), x - espacio, y + nivel, espacio / 2, nivel, coords);
-            coords.add(new int[]{x, y});
-            getInOrdenCoordsRec(nodo.getDerecha(), x + espacio, y + nivel, espacio / 2, nivel, coords);
+            getInOrdenNodosRec(nodo.getIzquierda(), nodos);
+            nodos.add(nodo);
+            getInOrdenNodosRec(nodo.getDerecha(), nodos);
         }
     }
 
-    public List<int[]> getPreOrdenCoords(int x, int y, int espacio, int nivel) {
-        List<int[]> coords = new ArrayList<>();
-        getPreOrdenCoordsRec(raiz, x, y, espacio, nivel, coords);
-        return coords;
+    public List<Nodo> getPreOrdenNodos() {
+        List<Nodo> nodos = new ArrayList<>();
+        getPreOrdenNodosRec(raiz, nodos);
+        return nodos;
     }
 
-    private void getPreOrdenCoordsRec(Nodo nodo, int x, int y, int espacio, int nivel, List<int[]> coords) {
+    private void getPreOrdenNodosRec(Nodo nodo, List<Nodo> nodos) {
         if (nodo != null) {
-            coords.add(new int[]{x, y});
-            getPreOrdenCoordsRec(nodo.getIzquierda(), x - espacio, y + nivel, espacio / 2, nivel, coords);
-            getPreOrdenCoordsRec(nodo.getDerecha(), x + espacio, y + nivel, espacio / 2, nivel, coords);
+            nodos.add(nodo);
+            getPreOrdenNodosRec(nodo.getIzquierda(), nodos);
+            getPreOrdenNodosRec(nodo.getDerecha(), nodos);
         }
     }
 
-    public List<int[]> getPostOrdenCoords(int x, int y, int espacio, int nivel) {
-        List<int[]> coords = new ArrayList<>();
-        getPostOrdenCoordsRec(raiz, x, y, espacio, nivel, coords);
-        return coords;
+    public List<Nodo> getPostOrdenNodos() {
+        List<Nodo> nodos = new ArrayList<>();
+        getPostOrdenNodosRec(raiz, nodos);
+        return nodos;
     }
 
-    private void getPostOrdenCoordsRec(Nodo nodo, int x, int y, int espacio, int nivel, List<int[]> coords) {
+    private void getPostOrdenNodosRec(Nodo nodo, List<Nodo> nodos) {
         if (nodo != null) {
-            getPostOrdenCoordsRec(nodo.getIzquierda(), x - espacio, y + nivel, espacio / 2, nivel, coords);
-            getPostOrdenCoordsRec(nodo.getDerecha(), x + espacio, y + nivel, espacio / 2, nivel, coords);
-            coords.add(new int[]{x, y});
+            getPostOrdenNodosRec(nodo.getIzquierda(), nodos);
+            getPostOrdenNodosRec(nodo.getDerecha(), nodos);
+            nodos.add(nodo);
         }
     }
 }

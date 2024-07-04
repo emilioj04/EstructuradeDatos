@@ -5,7 +5,12 @@
 package Master;
 import estructuradatos.*;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.swing.*;;
 
 /**
  *
@@ -15,7 +20,10 @@ public class master extends javax.swing.JFrame {
 
     private Arbol arbol;
     private List<int[]> recorridoCoords;
-    
+    private List<Nodo> recorridoNodos;
+    private Timer timer;
+    private int currentNodeIndex;
+    private Color defaultNodeColor;
     
     public master() {
         arbol = new Arbol();
@@ -93,7 +101,7 @@ public class master extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 328, Short.MAX_VALUE)
+            .addGap(0, 399, Short.MAX_VALUE)
         );
 
         reiniciar.setLabel("Reiniciar");
@@ -111,21 +119,23 @@ public class master extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(inOrden)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(preOrden)
-                        .addGap(55, 55, 55)
-                        .addComponent(postOrden)
-                        .addGap(82, 82, 82)
-                        .addComponent(reiniciar))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(inOrden)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(preOrden)
+                                .addGap(128, 128, 128)
+                                .addComponent(postOrden))
+                            .addComponent(jTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 522, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(agregar)
-                        .addGap(18, 18, 18)
-                        .addComponent(eliminar)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(agregar)
+                                .addGap(18, 18, 18)
+                                .addComponent(eliminar))
+                            .addComponent(reiniciar, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addGap(15, 15, 15))
         );
         layout.setVerticalGroup(
@@ -146,7 +156,7 @@ public class master extends javax.swing.JFrame {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
@@ -155,75 +165,129 @@ public class master extends javax.swing.JFrame {
     
     
     private void AgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AgregarActionPerformed
-        int value = Integer.parseInt(jTextField1.getText());
-        arbol.agregar(value);
+        int valor = Integer.parseInt(jTextField1.getText());
+        arbol.agregar(valor);
+        ((DrawingPanel) jPanel1).actualizarArbol(arbol);
         jTextField1.setText("");
-        recorridoCoords = null;
         jPanel1.repaint();
     }//GEN-LAST:event_AgregarActionPerformed
 
     private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
-        int value = Integer.parseInt(jTextField1.getText());
-        arbol.eliminar(value);
+        int valor = Integer.parseInt(jTextField1.getText());
+        arbol.eliminar(valor);
+        ((DrawingPanel) jPanel1).actualizarArbol(arbol);
         jTextField1.setText("");
-        recorridoCoords = null;
         jPanel1.repaint();
     }//GEN-LAST:event_eliminarActionPerformed
 
     private void inOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inOrdenActionPerformed
-        jTextArea1.setText("");
         arbol.inOrden(jTextArea1);
-        jPanel1.repaint();
+        iniciarAnimacion(arbol.getInOrdenNodos());
     }//GEN-LAST:event_inOrdenActionPerformed
 
     private void preOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_preOrdenActionPerformed
-        jTextArea1.setText("");
         arbol.preOrden(jTextArea1);
-        jPanel1.repaint();
+        iniciarAnimacion(arbol.getPreOrdenNodos());
     }//GEN-LAST:event_preOrdenActionPerformed
 
     private void postOrdenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_postOrdenActionPerformed
-        jTextArea1.setText("");
         arbol.postOrden(jTextArea1);
-        jPanel1.repaint();
+        iniciarAnimacion(arbol.getPostOrdenNodos());
     }//GEN-LAST:event_postOrdenActionPerformed
 
     private void reiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_reiniciarActionPerformed
-        recorridoCoords = null;
-        jTextArea1.setText("");
+        if (timer != null) {
+            timer.cancel();
+        }
+        currentNodeIndex = 0;
+        ((DrawingPanel) jPanel1).resetColors();
         jPanel1.repaint();
     }//GEN-LAST:event_reiniciarActionPerformed
 
     /**
      * @param args the command line arguments
      */
+    private void iniciarAnimacion(List<Nodo> recorrido) {
+        if (timer != null) {
+            timer.cancel();
+        }
+
+        recorridoNodos = recorrido;
+        currentNodeIndex = 0;
+
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (currentNodeIndex < recorridoNodos.size()) {
+                    Nodo nodo = recorridoNodos.get(currentNodeIndex);
+                    ((DrawingPanel) jPanel1).highlightNode(nodo);
+                    jPanel1.repaint();
+                    currentNodeIndex++;
+                } else {
+                    timer.cancel();
+                }
+            }
+        }, 0, 1000);
+    }
     
-    private class DrawingPanel extends javax.swing.JPanel {
+    public static void main(String args[]) {
+        java.awt.EventQueue.invokeLater(() -> new master().setVisible(true));
+    }
+    
+    class DrawingPanel extends JPanel {
+        private Arbol arbol;
+        private Map<Nodo, Color> nodeColors;
+
+        public DrawingPanel() {
+            this.nodeColors = new HashMap<>();
+        }
+
+        public void actualizarArbol(Arbol arbol) {
+            this.arbol = arbol;
+            this.nodeColors.clear();
+            for (Nodo nodo : arbol.getInOrdenNodos()) {
+                nodeColors.put(nodo, Color.BLACK);
+            }
+        }
+
+        public void highlightNode(Nodo nodo) {
+            nodeColors.put(nodo, Color.RED);
+        }
+
+        public void resetColors() {
+            for (Nodo nodo : nodeColors.keySet()) {
+                nodeColors.put(nodo, Color.BLACK);
+            }
+        }
+
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            Graphics2D g2d = (Graphics2D) g;
-            if (arbol.getRaiz() != null) {
-                dibujarArbol(g2d, getWidth() / 2, 30, arbol.getRaiz(), getWidth() / 4);
+            if (arbol != null) {
+                drawTree(g, getWidth() / 2, 30, arbol.getRaiz(), 40, 30);
             }
         }
 
-        private void dibujarArbol(Graphics2D g, int x, int y, Nodo nodo, int espacio) {
+        private void drawTree(Graphics g, int x, int y, Nodo nodo, int xOffset, int yOffset) {
             if (nodo != null) {
-                g.drawString(Integer.toString(nodo.getValor()), x, y);
+                g.setColor(nodeColors.getOrDefault(nodo, Color.BLACK));
+                g.fillOval(x - 15, y - 15, 30, 30);
+                g.setColor(Color.WHITE);
+                g.drawString(String.valueOf(nodo.getValor()), x - 5, y + 5);
+
                 if (nodo.getIzquierda() != null) {
-                    dibujarLinea(g, x - espacio, y + 50, x, y);
-                    dibujarArbol(g, x - espacio, y + 50, nodo.getIzquierda(), espacio / 2);
+                    g.setColor(Color.BLACK);
+                    g.drawLine(x - 10, y + 10, x - xOffset + 10, y + yOffset - 10);
+                    drawTree(g, x - xOffset, y + yOffset, nodo.getIzquierda(), xOffset / 2, yOffset);
                 }
+
                 if (nodo.getDerecha() != null) {
-                    dibujarLinea(g, x + espacio, y + 50, x, y);
-                    dibujarArbol(g, x + espacio, y + 50, nodo.getDerecha(), espacio / 2);
+                    g.setColor(Color.BLACK);
+                    g.drawLine(x + 10, y + 10, x + xOffset - 10, y + yOffset - 10);
+                    drawTree(g, x + xOffset, y + yOffset, nodo.getDerecha(), xOffset / 2, yOffset);
                 }
             }
-        }
-
-        private void dibujarLinea(Graphics2D g, int x1, int y1, int x2, int y2) {
-            g.drawLine(x1, y1, x2, y2);
         }
     }
 
