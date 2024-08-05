@@ -9,8 +9,6 @@ package estructuradatos;
  * @author Usuario
  */
 public interface Estructura {
-
-
     public boolean agregar(int valor);
-    boolean eliminar(int valor);
+    public boolean eliminar(int valor);
 }
